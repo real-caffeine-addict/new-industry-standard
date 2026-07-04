@@ -1,0 +1,32 @@
+#dev configurations
+env: dev
+routes:
+  gateway: http://localhost:8080
+#  auth: http://localhost:8081
+  identities: http://localhost:8082
+  documents: http://localhost:8083
+  audit: http://localhost:8084
+
+server:
+  gateway:
+    port: 8080
+#  auth:
+#    port: 8081
+  identities:
+    port: 8082
+  documents:
+    port: 8083
+  audit:
+    port: 8084
+
+spring:
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
+
+app:
+  security:
+    cors:
+      allowed-origins:
+        - "http://localhost:5173"

@@ -1,4 +1,17 @@
-tools/consultant-portal/formatting_instructions.md
-
+# IDE
 .idea/
 *.iml
+
+# Maven / Java
+target/
+*.class
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-local generated docs / private notes
+tools/consultant-portal/formatting_instructions.md
