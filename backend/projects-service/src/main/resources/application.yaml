@@ -1,3 +1,9 @@
+#Project-service config
 spring:
   application:
-    name: projects
+    name: project-service
+  config:
+    import: "file:${PSW_CONFIG_FILE}"
+
+server:
+  port: ${server.projects.port}

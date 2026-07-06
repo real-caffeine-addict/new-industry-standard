@@ -6,6 +6,7 @@ routes:
   identities: http://localhost:8082
   documents: http://localhost:8083
   audit: http://localhost:8084
+  projects: http://localhost:8085
 
 server:
   gateway:
@@ -18,6 +19,8 @@ server:
     port: 8083
   audit:
     port: 8084
+  projects:
+    port: 8085
 
 spring:
   cloud:

@@ -21,6 +21,7 @@
     <properties>
         <java.version>21</java.version>
         <spring.boot.version>4.1.0</spring.boot.version>
+        <logstash.logback.encoder.version>8.1</logstash.logback.encoder.version>
     </properties>
 
     <dependencyManagement>
@@ -55,6 +56,16 @@
                 <groupId>com.fasterxml.uuid</groupId>
                 <artifactId>java-uuid-generator</artifactId>
                 <version>5.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.psw</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash.logback.encoder.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
