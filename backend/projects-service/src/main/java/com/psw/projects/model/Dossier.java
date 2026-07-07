@@ -1,20 +1,20 @@
 package com.psw.projects.model;
 
-import com.psw.projects.enums.ProjectStatus;
+import com.psw.projects.enums.Discipline;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project {
+public class Dossier {
     private Long id;
+    private Long projectId;
     private String name;
     private String code;
-    private ProjectStatus status;
-    private LocalDate startDate;
-    private String projectFilesLocation;
+    private Discipline discipline;
+    private String system;
+    private String subsystem;
+    private String area;
 }
