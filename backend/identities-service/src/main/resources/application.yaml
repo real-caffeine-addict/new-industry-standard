@@ -1,3 +1,9 @@
+#Identities-service config
 spring:
   application:
-    name: identities
+    name: identities-service
+  config:
+    import: "file:${PSW_CONFIG_FILE}"
+
+server:
+  port: ${server.identities.port}
