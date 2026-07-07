@@ -1,3 +1,9 @@
+#Audit-service config
 spring:
   application:
-    name: audit
+    name: audit-service
+  config:
+    import: "file:${PSW_CONFIG_FILE}"
+
+server:
+  port: ${server.audit.port}
