@@ -119,13 +119,13 @@ Default rule:
 Planned stack:
 
 - **Backend:** Spring Boot / Java
-- **Database:** OracleDB
+- **Database:** MariaDB
 - **Web UI:** React
 - **Mobile UI:** React Native later
 - **Background processing:** queued workers/jobs for long-running tasks
 - **AI:** assistant layer added gradually after reliable workflows exist
 
-The starting architecture is a modular monolith with clear domain boundaries. The project should avoid premature microservices, generic agent frameworks, or autonomous behavior before the core workflows are reliable.
+The starting architecture uses a small microservice-based backend with clear domain boundaries. The project should avoid premature generic agent frameworks or autonomous behavior before the core workflows are reliable.
 
 ---
 
