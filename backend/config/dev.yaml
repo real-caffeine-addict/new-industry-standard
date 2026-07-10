@@ -23,6 +23,12 @@ server:
     port: 8085
 
 spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/psw_dev
+    username: psw_app
+    password: ${DEV_USER_DB_PASSWORD}
+  flyway:
+    enabled: true
   cloud:
     openfeign:
       okhttp:

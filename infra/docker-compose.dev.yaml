@@ -1,0 +1,22 @@
+# DEV only docker-compose
+services:
+  phase1-db:
+    image: mariadb:11.4
+    container_name: psw-dev-db
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DEV_ROOT_DB_PASSWORD}
+      MARIADB_USER: psw_app
+      MARIADB_DATABASE: psw_dev
+      MARIADB_PASSWORD: ${DEV_USER_DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - psw-mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u psw_app -p$${MARIADB_PASSWORD}"]
+      interval: 2s
+      timeout: 1s
+      retries: 5
+      start_period: 10s
+volumes:
+  psw-mariadb-data:
