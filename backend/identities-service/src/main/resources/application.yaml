@@ -1,9 +1,13 @@
-#Identities-service config
+# Identities-service config
 spring:
   application:
     name: identities-service
   config:
     import: "file:${PSW_CONFIG_FILE}"
+  flyway:
+    table: flyway_schema_history_identities
+    baseline-on-migrate: true
+    baseline-version: 0
 
 server:
   port: ${server.identities.port}

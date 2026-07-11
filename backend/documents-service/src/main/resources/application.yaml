@@ -1,9 +1,13 @@
-#Documents-service config
+# Documents-service config
 spring:
   application:
     name: documents-service
   config:
     import: "file:${PSW_CONFIG_FILE}"
+  flyway:
+    table: flyway_schema_history_documents
+    baseline-on-migrate: true
+    baseline-version: 0
 
 server:
   port: ${server.documents.port}

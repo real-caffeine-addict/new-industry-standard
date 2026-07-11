@@ -1,9 +1,13 @@
-#Audit-service config
+# Audit-service config
 spring:
   application:
     name: audit-service
   config:
     import: "file:${PSW_CONFIG_FILE}"
+  flyway:
+    table: flyway_schema_history_audit
+    baseline-on-migrate: true
+    baseline-version: 0
 
 server:
   port: ${server.audit.port}

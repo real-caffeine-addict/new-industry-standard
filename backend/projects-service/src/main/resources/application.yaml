@@ -1,9 +1,13 @@
-#Project-service config
+# Project-service config
 spring:
   application:
     name: project-service
   config:
     import: "file:${PSW_CONFIG_FILE}"
+  flyway:
+    table: flyway_schema_history_projects
+    baseline-on-migrate: true
+    baseline-version: 0
 
 server:
   port: ${server.projects.port}
