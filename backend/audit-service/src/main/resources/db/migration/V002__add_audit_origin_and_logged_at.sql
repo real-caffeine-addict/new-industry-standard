@@ -1,0 +1,3 @@
+ALTER TABLE audit_events
+    ADD COLUMN origin_service VARCHAR(50) NOT NULL AFTER project_id,
+    ADD COLUMN logged_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER occurred_at;
