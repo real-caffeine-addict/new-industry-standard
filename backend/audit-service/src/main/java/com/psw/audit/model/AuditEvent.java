@@ -15,9 +15,11 @@ public class AuditEvent {
     private Long id;
     private Long userId;
     private Long projectId;
+    private String originService;
     private AuditableAction action;
     private TargetType targetType;
     private Long targetId;
     private LocalDateTime occurredAt;
-    private String summary;
+    private LocalDateTime loggedAt;
+    private String jsonPayload;
 }
