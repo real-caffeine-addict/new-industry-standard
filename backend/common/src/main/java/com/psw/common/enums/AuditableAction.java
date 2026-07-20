@@ -1,4 +1,4 @@
-package com.psw.audit.enums;
+package com.psw.common.enums;
 
 public enum AuditableAction {
     CREATED,

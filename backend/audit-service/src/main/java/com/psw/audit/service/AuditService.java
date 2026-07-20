@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.psw.audit.model.InsertAuditEventDb;
 import com.psw.audit.repository.AuditRepository;
-import com.psw.common.dto.InsertAuditEventRequest;
+import com.psw.common.dto.CreateAuditEventRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,15 +17,15 @@ public class AuditService {
         this.mapper = mapper;
     }
 
-    public String createAuditEvent (InsertAuditEventRequest input, String origin) {
+    public String createAuditEvent (CreateAuditEventRequest input, String origin) {
         String jsonPayload = jsonBuilder(input);
         Long eventId = repo.createAuditEvent(
                 new InsertAuditEventDb(
                         input.userId(),
                         input.projectId(),
                         origin,
-                        input.action(),
-                        input.targetType(),
+                        input.action().name(),
+                        input.targetType().name(),
                         input.targetId(),
                         input.occurredAt(),
                         jsonPayload

@@ -1,7 +1,7 @@
 package com.psw.audit.model;
 
-import com.psw.audit.enums.AuditableAction;
-import com.psw.audit.enums.TargetType;
+import com.psw.common.enums.AuditableAction;
+import com.psw.common.enums.TargetType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

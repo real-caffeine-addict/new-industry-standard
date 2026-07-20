@@ -16,6 +16,7 @@ public class DocumentsController {
 
     @PostMapping("/create-document")
     public String createNewDocument (@RequestBody InsertDocumentApiContract input) {
-        return service.createNewDocument(input);
+        Long tempUser = 1L; //TODO: replace with actual jwt data
+        return service.createNewDocument(input, tempUser);
     }
 }
