@@ -1,6 +1,6 @@
 # Documents Service API
 
-## POST /documents
+## POST localhost:8083/create-document
 
 Creates a document with its initial revision.
 
@@ -9,14 +9,14 @@ Creates a document with its initial revision.
 | Field | Type | Required | Notes |
 |---|---|---:|---|
 | projectId | number | yes | Existing project id |
-| dossierId | number | no | Existing dossier id when assigned |
+| dossierId | number/null | no | Existing dossier id when assigned |
 | title | string | yes | Document title |
 | documentNumber | string | yes | Unique per project and/or dossier |
 | type | string | yes | DRAWING, SPEC, DATASHEET, SUBMITTAL, QUERY, RCO, CO, REPORT |
 | originatingCompanyId | number/null | no | External company id |
 | revisionCode | string/null | no | Defaults to A |
-| status | string/null | no | Defaults to DRAFT |
-| issuedAt | datetime | yes | ISO-8601 local datetime |
+| status | string/null | no | DRAFT, SUBMITTED, APPROVED_WITH_COMMENTS, IFC, REJECTED, CANCELLED, SUPERSEDED. Defaults to DRAFT |
+| issuedAt | datetime | yes | ISO-8601 local datetime, for example 2026-07-01T10:00:00 |
 
 ### Example Request
 
