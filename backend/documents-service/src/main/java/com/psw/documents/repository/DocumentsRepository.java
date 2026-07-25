@@ -1,4 +1,4 @@
-package com.psw.documents.repositories;
+package com.psw.documents.repository;
 
 import com.psw.documents.model.InsertDocumentDb;
 import com.psw.documents.model.InsertRevisionDb;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 @Repository

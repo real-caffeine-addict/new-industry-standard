@@ -7,7 +7,7 @@ import com.psw.documents.clients.AuditServiceClient;
 import com.psw.documents.model.InsertDocumentDb;
 import com.psw.documents.model.InsertRevisionDb;
 import com.psw.documents.model.InsertDocumentApiContract;
-import com.psw.documents.repositories.DocumentsRepository;
+import com.psw.documents.repository.DocumentsRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +29,7 @@ public class DocumentService { //TODO: add request validation before exposing be
         Long docId = repo.createDocument(insertDocumentBuilder(input));
         Long revId = repo.createRevision(initRevBuilder(input, docId));
         repo.updateCurrentRev(revId, docId);
-        System.out.println(auditServiceClient.createAuditEvent(
+        String auditResponse = auditServiceClient.createAuditEvent(
                 "documents-service",
                 new CreateAuditEventRequest(
                         user,
@@ -39,8 +39,12 @@ public class DocumentService { //TODO: add request validation before exposing be
                         docId,
                         LocalDateTime.now()
                 )
-        ));
-        return "Successfully created document id: " + docId + " revision id: " + revId; //TODO: replace temporary string response with structured response DTO.
+        );
+        return "Successfully created document id: " + docId + " revision id: " + revId +
+                "\n" + auditResponse;
+        //TODO: replace temporary string response with structured response DTO.
+        // TODO: response currently exposes audit-service response for Phase 1 debugging.
+        //        Later the Gateway should consume/correlate this, not the UI.
     }
 
     private InsertDocumentDb insertDocumentBuilder (InsertDocumentApiContract input){
@@ -49,7 +53,7 @@ public class DocumentService { //TODO: add request validation before exposing be
                 input.dossierId(),
                 input.title(),
                 input.documentNumber(),
-                input.type().toString(),
+                input.type().name(),
                 input.originatingCompanyId()
         );
     }
@@ -58,7 +62,7 @@ public class DocumentService { //TODO: add request validation before exposing be
         return new InsertRevisionDb(
                 documentId,
                 input.revisionCode() == null ? "A" :input.revisionCode(),
-                input.status() == null ? "DRAFT" : input.status().toString(),
+                input.status() == null ? "DRAFT" : input.status().name(),
                 input.issuedAt(),
                 String.format("%s/%s/%s", input.projectId(), input.dossierId(), input.documentNumber()), //TODO: replace temporary file location builder with document storage path policy.
                 0
