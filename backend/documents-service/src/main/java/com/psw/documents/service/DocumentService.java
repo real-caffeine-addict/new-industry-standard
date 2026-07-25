@@ -4,6 +4,7 @@ import com.psw.common.dto.CreateAuditEventRequest;
 import com.psw.common.enums.AuditableAction;
 import com.psw.common.enums.TargetType;
 import com.psw.documents.clients.AuditServiceClient;
+import com.psw.documents.model.Document;
 import com.psw.documents.model.InsertDocumentDb;
 import com.psw.documents.model.InsertRevisionDb;
 import com.psw.documents.model.InsertDocumentApiContract;
@@ -46,6 +47,8 @@ public class DocumentService { //TODO: add request validation before exposing be
         // TODO: response currently exposes audit-service response for Phase 1 debugging.
         //        Later the Gateway should consume/correlate this, not the UI.
     }
+
+    public Document getDocumentById (Long id){ return repo.getDocumentById(id); }
 
     private InsertDocumentDb insertDocumentBuilder (InsertDocumentApiContract input){
         return new InsertDocumentDb(

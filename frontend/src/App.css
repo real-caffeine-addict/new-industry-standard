@@ -1,14 +1,45 @@
 .app-shell {
-  min-height: 100svh;
-  display: flex;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 180px 720px;
+  gap: 32px;
   align-items: flex-start;
   justify-content: center;
   padding: 48px 20px;
   box-sizing: border-box;
 }
 
+.sidebar {
+  position: sticky;
+  top: 32px;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+
+.sidebar p {
+  margin: 0 0 10px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.nav-button {
+  width: 100%;
+  justify-self: stretch;
+  color: #334155;
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  text-align: left;
+}
+
+.nav-button.active {
+  color: #fff;
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
 .form-panel {
-  width: min(720px, 100%);
+  width: 720px;
   text-align: left;
 }
 
@@ -97,4 +128,40 @@ button:disabled {
 .result.error {
   color: #7f1d1d;
   background: #fee2e2;
+}
+
+.document-result {
+  display: grid;
+  gap: 0;
+  margin: 18px 0 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.document-result div {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  border-top: 1px solid #e2e8f0;
+}
+
+.document-result div:first-child {
+  border-top: 0;
+}
+
+.document-result dt,
+.document-result dd {
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.document-result dt {
+  color: #475569;
+  background: #f8fafc;
+  font-weight: 700;
+}
+
+.document-result dd {
+  color: #0f172a;
+  overflow-wrap: anywhere;
 }

@@ -1,6 +1,6 @@
 # Documents Service API
 
-## POST localhost:8083/create-document
+## POST localhost:8083/documents/create-document
 
 Creates a document with its initial revision.
 
@@ -42,3 +42,32 @@ Temporary plain text response containing created document and revision ids.
 - Phase 1 runs without authentication.
 - Request validation is not yet implemented.
 - File upload is not yet implemented. fileLocation is generated temporarily by the service
+
+## GET localhost:8083/documents/{id}
+
+Reads the stored document by ID.
+
+### Path parameters
+
+| Field | Type   | Required | Notes       |
+| ----- | ------ | -------: |-------------|
+| id    | number |      yes | Document ID |
+
+### Example request
+
+```
+GET /documents/1
+```
+
+### Response
+
+{
+"id": 1,
+"projectId": 1,
+"dossierId": 1,
+"title": "Seed Drawing 1",
+"documentNumber": "DRW-001",
+"type": "DRAWING",
+"currentRevisionId": 1,
+"originatingCompanyId": null
+}

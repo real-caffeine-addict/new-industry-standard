@@ -1,7 +1,9 @@
 package com.psw.documents.repository;
 
+import com.psw.documents.model.Document;
 import com.psw.documents.model.InsertDocumentDb;
 import com.psw.documents.model.InsertRevisionDb;
+import com.psw.documents.repository.mapper.DocumentMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -69,5 +71,10 @@ public class DocumentsRepository {
     public void updateCurrentRev (Long revId, Long docId){
         String sql = "UPDATE documents SET current_revision_id = ? WHERE id = ?";
         jdbc.update(sql, revId, docId);
+    }
+
+    public Document getDocumentById (Long id){
+        String sql = "SELECT * FROM documents WHERE id = ?";
+        return jdbc.queryForObject(sql, new DocumentMapper(), id); // TODO: Add proper not-found handling after RequestLogger/error handling is introduced.
     }
 }
