@@ -17,7 +17,7 @@ public class AuditService {
         this.mapper = mapper;
     }
 
-    public String createAuditEvent (CreateAuditEventRequest input, String origin) {
+    public String createAuditEvent(CreateAuditEventRequest input, String origin) {
         String jsonPayload = jsonBuilder(input);
         Long eventId = repo.createAuditEvent(
                 new InsertAuditEventDb(

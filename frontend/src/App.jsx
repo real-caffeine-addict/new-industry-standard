@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { createDocument, readDocument } from './util/api'
+import { createDocument, readAuditEvent, readDocument } from './util/api'
 
 const currentUser = { id: 1, username: 'tester1' } // TODO: replace with phase1 auth user.
 
@@ -24,6 +24,9 @@ function App() {
   const [documentId, setDocumentId] = useState('1')
   const [isReading, setIsReading] = useState(false)
   const [readResult, setReadResult] = useState(null)
+  const [auditEventId, setAuditEventId] = useState('1')
+  const [isReadingAuditEvent, setIsReadingAuditEvent] = useState(false)
+  const [auditEventResult, setAuditEventResult] = useState(null)
 
   const updateField = (event) => {
     const { name, value } = event.target
@@ -74,6 +77,21 @@ function App() {
     }
   }
 
+  const submitReadAuditEventForm = async (event) => {
+    event.preventDefault()
+    setIsReadingAuditEvent(true)
+    setAuditEventResult(null)
+
+    try {
+      const auditEvent = await readAuditEvent(auditEventId)
+      setAuditEventResult({ type: 'success', message: auditEvent })
+    } catch (error) {
+      setAuditEventResult({ type: 'error', message: error.message })
+    } finally {
+      setIsReadingAuditEvent(false)
+    }
+  }
+
   return (
     <main className="app-shell">
       <aside className="sidebar" aria-label="Document actions">
@@ -91,6 +109,13 @@ function App() {
           onClick={() => setActiveView('read')}
         >
           Read Form
+        </button>
+        <button
+          className={activeView === 'readAuditEvent' ? 'nav-button active' : 'nav-button'}
+          type="button"
+          onClick={() => setActiveView('readAuditEvent')}
+        >
+          Read Audit Event
         </button>
       </aside>
 
@@ -247,6 +272,42 @@ function App() {
             {readResult?.type === 'error' && (
               <p className="result error" role="status">
                 {readResult.message}
+              </p>
+            )}
+          </>
+        )}
+
+        {activeView === 'readAuditEvent' && (
+          <>
+            <div className="heading">
+              <h1>Read Audit Event</h1>
+            </div>
+
+            <form onSubmit={submitReadAuditEventForm}>
+              <label>
+                Audit Event ID
+                <input
+                  min="1"
+                  type="number"
+                  value={auditEventId}
+                  onChange={(event) => setAuditEventId(event.target.value)}
+                />
+              </label>
+
+              <button type="submit" disabled={isReadingAuditEvent}>
+                {isReadingAuditEvent ? 'Reading...' : 'Read Audit Event'}
+              </button>
+            </form>
+
+            {auditEventResult?.type === 'success' && (
+              <pre className="text-result" role="status">
+                {auditEventResult.message}
+              </pre>
+            )}
+
+            {auditEventResult?.type === 'error' && (
+              <p className="result error" role="status">
+                {auditEventResult.message}
               </p>
             )}
           </>

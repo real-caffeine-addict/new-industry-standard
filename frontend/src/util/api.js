@@ -1,4 +1,5 @@
 const DOCUMENTS_BASE_URL = 'http://localhost:8083/documents'
+const AUDIT_EVENTS_BASE_URL = 'http://localhost:8084/audit-events'
 
 export async function createDocument(payload) {
   const response = await fetch(`${DOCUMENTS_BASE_URL}`, {
@@ -32,4 +33,15 @@ export async function readDocument(id) {
   }
 
   return body
+}
+
+export async function readAuditEvent(id) {
+  const response = await fetch(`${AUDIT_EVENTS_BASE_URL}/${id}`)
+  const message = await response.text()
+
+  if (!response.ok) {
+    throw new Error(message || 'Failed to read audit event')
+  }
+
+  return message
 }
