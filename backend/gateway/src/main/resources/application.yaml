@@ -1,3 +1,14 @@
+#GW-service config
 spring:
   application:
     name: gateway
+  config:
+    import: "file:${PSW_CONFIG_FILE}"
+
+server:
+  port: ${server.gateway.port}
+
+psw:
+  mvc-beans:
+    enabled: false
+    
