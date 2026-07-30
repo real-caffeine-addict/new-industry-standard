@@ -19,7 +19,7 @@ public class AuditRepository {
     private final NamedParameterJdbcTemplate namedJdbc;
     private final JdbcTemplate jdbc;
 
-    @Value("classpath:db/sql/createAuditEvent.sql")
+    @Value("classpath:db/sql/insertAuditEvent.sql")
     private Resource insertAuditEvent;
 
     private String insertAuditEventStr;
