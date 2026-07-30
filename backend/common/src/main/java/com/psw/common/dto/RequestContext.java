@@ -16,7 +16,8 @@ import java.util.UUID;
 @Builder
 public class RequestContext {
     private UUID requestId;
-    private String sourceIp;
+    private String peerIp;
+    private String forwardedIp;
     private String importantHeaders;
     private String otherHeaders;
     private String path;

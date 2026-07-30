@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
+import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -19,19 +20,19 @@ public class ContextInitUtil {
     public ContextInitUtil(ObjectMapper mapper) { this.mapper = mapper; }
 
     public void ipResolver (ServerHttpRequest request, RequestContext ctx) {
-        try {
-            //TODO: resolve IP
-            ctx.setSourceIp("IP");
-        }catch (Exception e) {
-            ctx.getAlerts().add(new AlertRecord(
-                    UUID.randomUUID(),
-                    ctx.getRequestId(),
-                    Instant.now(),
-                    AlertSeverity.MINOR,
-                    "ContextInitFilter",
-                    "Unable to resolve source IP"
-            ));
-        }
+            ctx.setForwardedIp(request.getHeaders().getFirst("X-Forwarded-For")); //TODO: Update resolver when production infra is selected.
+            InetSocketAddress inetSocketAddress = request.getRemoteAddress();
+            ctx.setPeerIp(inetSocketAddress != null ? inetSocketAddress.getHostString() : null);
+            if (inetSocketAddress == null) {
+                ctx.getAlerts().add(new AlertRecord(
+                        UUID.randomUUID(),
+                        ctx.getRequestId(),
+                        Instant.now(),
+                        AlertSeverity.MINOR,
+                        "ContextInitFilter",
+                        "Remote peer address is unavailable"
+                ));
+            }
     }
 
     public void headerResolver (HttpHeaders httpHeaders, RequestContext ctx) {
