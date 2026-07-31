@@ -1,40 +1,80 @@
 package com.psw.gateway.filter;
 
+import com.psw.common.dto.AlertRecord;
 import com.psw.common.dto.RequestContext;
+import com.psw.common.enums.AlertSeverity;
 import com.psw.gateway.utility.ContextInitUtil;
+import com.psw.gateway.utility.GwLogger;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class ContextInitFilter implements WebFilter {
+public class ContextInitFilter extends OncePerRequestFilter {
     private final ContextInitUtil util;
+    private final GwLogger logger;
 
-    public ContextInitFilter (ContextInitUtil util) { this.util = util; }
+    public ContextInitFilter(ContextInitUtil util,
+                             GwLogger logger) {
+        this.util = util;
+        this.logger = logger;
+    }
+
     @Override
     @NullMarked
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         RequestContext ctx = RequestContext.builder()
                 .requestId(UUID.randomUUID())
-                .path(request.getURI().getPath())
-                .method(request.getMethod().name())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
                 .startedAt(Instant.now())
                 .build();
 
-        util.ipResolver(request, ctx);
-        util.headerResolver(request.getHeaders(), ctx);
+        request.setAttribute("context", ctx);
 
-        return null;
+        util.ipResolver(request, ctx);
+        util.headerResolver(request, ctx);
+        try {
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            ctx.setStatus(500);
+            ctx.setResponseBody("Internal server error");
+            ctx.getAlerts().add(new AlertRecord(
+                    UUID.randomUUID(),
+                    ctx.getRequestId(),
+                    Instant.now(),
+                    AlertSeverity.MAJOR,
+                    "ContextInitFilter",
+                    "Unknown exception thrown",
+                    e
+            ));
+        } finally {
+            ctx.setElapsed(Duration.between(ctx.getStartedAt(),Instant.now()).toMillis());
+            String xLogId = logger.requestLogger(ctx);
+            if (xLogId != null) {
+                response.setHeader("X-log-ID", xLogId);
+            }
+            if (!response.isCommitted()) {
+                response.setStatus(ctx.getStatus());
+                if (ctx.getResponseBody() != null) {
+                    response.getWriter().write(ctx.getResponseBody());
+                } else {
+                    response.getWriter().write("{}");
+                }
+            }
+
+        }
     }
 }

@@ -11,5 +11,6 @@ public record AlertRecord(
         Instant timestamp,
         AlertSeverity severity,
         String sourceComponent,
-        String description
+        String description,
+        Exception debuggingData
 ) {}

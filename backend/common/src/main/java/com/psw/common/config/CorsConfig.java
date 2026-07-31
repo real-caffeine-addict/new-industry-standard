@@ -1,6 +1,5 @@
 package com.psw.common.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -10,11 +9,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-@ConditionalOnProperty(
-        name = "psw.mvc-beans.enabled",
-        havingValue = "true",
-        matchIfMissing = true
-)
 public class CorsConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

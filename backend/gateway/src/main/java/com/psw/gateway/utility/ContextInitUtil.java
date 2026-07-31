@@ -1,57 +1,64 @@
 package com.psw.gateway.utility;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.psw.common.dto.AlertRecord;
 import com.psw.common.dto.RequestContext;
 import com.psw.common.enums.AlertSeverity;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
-import java.net.InetSocketAddress;
 import java.time.Instant;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class ContextInitUtil {
-    private final ObjectMapper mapper;
+    private final static Set<String> IMPORTANT_HEADERS = Set.of(
+            HttpHeaders.REFERER.toLowerCase(),
+            HttpHeaders.USER_AGENT.toLowerCase(),
+            HttpHeaders.ORIGIN.toLowerCase(),
+            HttpHeaders.HOST.toLowerCase()
+    );
 
-    public ContextInitUtil(ObjectMapper mapper) { this.mapper = mapper; }
+    private final static Set<String> SENSITIVE_HEADERS = Set.of(
+            HttpHeaders.AUTHORIZATION.toLowerCase(),
+            HttpHeaders.COOKIE.toLowerCase(),
+            HttpHeaders.SET_COOKIE.toLowerCase(),
+            "proxy-authorization"
+    );
 
-    public void ipResolver (ServerHttpRequest request, RequestContext ctx) {
-            ctx.setForwardedIp(request.getHeaders().getFirst("X-Forwarded-For")); //TODO: Update resolver when production infra is selected.
-            InetSocketAddress inetSocketAddress = request.getRemoteAddress();
-            ctx.setPeerIp(inetSocketAddress != null ? inetSocketAddress.getHostString() : null);
-            if (inetSocketAddress == null) {
+    public void ipResolver (HttpServletRequest request, RequestContext ctx) {
+            ctx.setForwardedIp(request.getHeader("X-Forwarded-For")); //TODO: Update resolver when production infra is selected.
+            ctx.setPeerIp(request.getRemoteAddr());
+            if (ctx.getPeerIp() == null) {
                 ctx.getAlerts().add(new AlertRecord(
                         UUID.randomUUID(),
                         ctx.getRequestId(),
                         Instant.now(),
                         AlertSeverity.MINOR,
                         "ContextInitFilter",
-                        "Remote peer address is unavailable"
+                        "Remote peer address is unavailable",
+                        null
                 ));
             }
     }
 
-    public void headerResolver (HttpHeaders httpHeaders, RequestContext ctx) {
-        try {
-            //TODO: add headers handlers
-            String important = mapper.writeValueAsString(httpHeaders);
-            String other = "other";
-            ctx.setImportantHeaders(important);
-            ctx.setOtherHeaders(other);
-        }catch (JsonProcessingException e){
-            ctx.setOtherHeaders(httpHeaders.toString());
-            ctx.getAlerts().add(new AlertRecord(
-                    UUID.randomUUID(),
-                    ctx.getRequestId(),
-                    Instant.now(),
-                    AlertSeverity.WARN,
-                    "ContextInitFilter",
-                    "Failed to serialize request headers"
-            ));
+    public void headerResolver (HttpServletRequest request, RequestContext ctx) {
+        Map<String, List<String>> important = new LinkedHashMap<>();
+        Map<String, List<String>> other = new LinkedHashMap<>();
+        Enumeration<String> names = request.getHeaderNames();
+        while (names != null && names.hasMoreElements()){
+            String name = names.nextElement();
+            List<String> values = Collections.list(request.getHeaders(name));
+            String normalized = name.toLowerCase(Locale.ROOT);
+            if (SENSITIVE_HEADERS.contains(normalized)) {
+                important.put(name, List.of("[redacted]"));
+            } else if (IMPORTANT_HEADERS.contains(normalized)) {
+                important.put(name, List.copyOf(values));
+            } else {
+                other.put(name, List.copyOf(values));
+            }
         }
+        ctx.setImportantHeaders(important);
+        ctx.setOtherHeaders(other);
     }
 }
