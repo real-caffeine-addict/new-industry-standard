@@ -8,6 +8,7 @@ import java.util.UUID;
 public record AlertRecord(
         UUID logId,
         UUID requestId,
+        Long incidentId,
         Instant timestamp,
         AlertSeverity severity,
         String sourceComponent,

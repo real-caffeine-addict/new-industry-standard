@@ -33,6 +33,7 @@ public class ContextInitUtil {
                 ctx.getAlerts().add(new AlertRecord(
                         UUID.randomUUID(),
                         ctx.getRequestId(),
+                        null,
                         Instant.now(),
                         AlertSeverity.MINOR,
                         "ContextInitFilter",

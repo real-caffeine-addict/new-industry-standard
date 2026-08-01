@@ -54,6 +54,7 @@ public class ContextInitFilter extends OncePerRequestFilter {
             ctx.getAlerts().add(new AlertRecord(
                     UUID.randomUUID(),
                     ctx.getRequestId(),
+                    null,
                     Instant.now(),
                     AlertSeverity.MAJOR,
                     "ContextInitFilter",
@@ -62,9 +63,9 @@ public class ContextInitFilter extends OncePerRequestFilter {
             ));
         } finally {
             ctx.setElapsed(Duration.between(ctx.getStartedAt(),Instant.now()).toMillis());
-            String xLogId = logger.requestLogger(ctx);
+            Long xLogId = logger.logRequest(ctx);
             if (xLogId != null) {
-                response.setHeader("X-log-ID", xLogId);
+                response.setHeader("X-log-ID", xLogId.toString());
             }
             if (!response.isCommitted()) {
                 response.setStatus(ctx.getStatus());
