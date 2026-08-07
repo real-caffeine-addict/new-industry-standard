@@ -62,6 +62,9 @@ public class ContextInitFilter extends OncePerRequestFilter {
                     e
             ));
         } finally {
+            if (ctx.getStatus() == 0) {
+                ctx.setStatus(response.getStatus());
+            }
             ctx.setElapsed(Duration.between(ctx.getStartedAt(),Instant.now()).toMillis());
             Long xLogId = logger.logRequest(ctx);
             if (xLogId != null) {
