@@ -7,6 +7,7 @@ routes:
   documents: http://localhost:8083
   audit: http://localhost:8084
   projects: http://localhost:8085
+  incident: http://localhost:8899
 
 server:
   gateway:
@@ -21,6 +22,8 @@ server:
     port: 8084
   projects:
     port: 8085
+  incidents:
+    port: 8899
 
 spring:
   datasource:

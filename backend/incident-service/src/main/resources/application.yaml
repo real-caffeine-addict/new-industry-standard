@@ -1,0 +1,13 @@
+# Incident-service config
+spring:
+  application:
+    name: incident-service
+  config:
+    import: "file:${PSW_CONFIG_FILE}"
+  flyway:
+    table: flyway_schema_history_incident
+    baseline-on-migrate: true
+    baseline-version: 0
+
+server:
+  port: ${server.incidents.port}

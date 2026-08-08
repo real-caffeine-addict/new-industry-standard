@@ -16,6 +16,7 @@
         <module>documents-service</module>
         <module>audit-service</module>
         <module>common</module>
+        <module>incident-service</module>
     </modules>
 
     <properties>
