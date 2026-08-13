@@ -1,7 +1,7 @@
 package com.psw.gateway.utility;
 
-import com.psw.common.dto.AlertRecord;
-import com.psw.common.dto.RequestContext;
+import com.psw.gateway.model.AlertRecord;
+import com.psw.gateway.model.RequestContext;
 import com.psw.common.enums.AlertSeverity;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;

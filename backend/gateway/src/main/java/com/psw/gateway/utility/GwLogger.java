@@ -1,7 +1,7 @@
 package com.psw.gateway.utility;
 
-import com.psw.common.dto.AlertRecord;
-import com.psw.common.dto.RequestContext;
+import com.psw.gateway.model.AlertRecord;
+import com.psw.gateway.model.RequestContext;
 import com.psw.common.enums.AlertSeverity;
 import net.logstash.logback.argument.StructuredArguments;
 import org.slf4j.Logger;
@@ -48,7 +48,22 @@ public class GwLogger {
         return alertHandlerResult.incId();
     }
 
+    public void logResponseOwnershipViolation (UUID requestId){
+        AlertRecord ownershipViolationRecord = new AlertRecord(
+                UUID.randomUUID(),
+                requestId,
+                null,
+                Instant.now(),
+                AlertSeverity.CRITICAL,
+                "ContextInitFilter",
+                "Response ownership violation detected",
+                Map.of("ownershipState", "committed outside gateway")
+        );
+        alertHandler(List.of(ownershipViolationRecord), requestId);
+    }
+
     private AlertHandlerResult alertHandler(List<AlertRecord> alerts, UUID requestId) {
+        // Create a list of severe alerts
         List<AlertRecord> severeAlerts = new ArrayList<>();
         Long incId = null;
         for (AlertRecord alert : alerts) {
@@ -59,12 +74,15 @@ public class GwLogger {
             }
         }
 
+        // If there's more than 1 severe alert per message means:
+        // A request lifecycle that should have been broken but didn't
         if (severeAlerts.size() > 1){
             AlertRecord requestError = requestErrorHandler(requestId);
             incId = requestError.incidentId();
             logAlert(requestError);
         }
 
+        // Log all severe alerts and trigger incident handler
         for (AlertRecord alert : severeAlerts){
             AlertRecord  incAlert = incidentHandler.createIncidentIfRequired(alert);
             if (incAlert != null){
@@ -88,7 +106,7 @@ public class GwLogger {
         logPayload.put("sourceComponent", alert.sourceComponent());
         logPayload.put("description", alert.description());
         if (alert.debuggingData() != null)
-            logPayload.put("debuggingData", exceptionParser.exceptionParser(alert.debuggingData()));
+            logPayload.put("debuggingData", alert.debuggingData());
         switch (alert.severity()){
             case WARN -> alertLogger.warn("alert-log" ,StructuredArguments.entries(logPayload));
             case INFO -> alertLogger.info("alert-log" ,StructuredArguments.entries(logPayload));
@@ -116,8 +134,8 @@ public class GwLogger {
                     Instant.now(),
                     AlertSeverity.CRITICAL,
                     "GwLogger",
-                    "Request had more than one MAJOR or CRITICAL alert",
-                    null
+                    "Failed to log incident",
+                    exceptionParser.exceptionParser(e)
             );
         }
     }

@@ -1,8 +1,9 @@
-package com.psw.common.dto;
+package com.psw.gateway.model;
 
 import com.psw.common.enums.AlertSeverity;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 public record AlertRecord(
@@ -13,5 +14,5 @@ public record AlertRecord(
         AlertSeverity severity,
         String sourceComponent,
         String description,
-        Exception debuggingData
+        Map<String, Object> debuggingData
 ) {}

@@ -1,9 +1,10 @@
 package com.psw.gateway.filter;
 
-import com.psw.common.dto.AlertRecord;
-import com.psw.common.dto.RequestContext;
+import com.psw.gateway.model.AlertRecord;
+import com.psw.gateway.model.RequestContext;
 import com.psw.common.enums.AlertSeverity;
 import com.psw.gateway.utility.ContextInitUtil;
+import com.psw.gateway.utility.ExceptionParserUtil;
 import com.psw.gateway.utility.GwLogger;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,11 +26,14 @@ import java.util.UUID;
 public class ContextInitFilter extends OncePerRequestFilter {
     private final ContextInitUtil util;
     private final GwLogger logger;
+    private final ExceptionParserUtil parser;
 
     public ContextInitFilter(ContextInitUtil util,
-                             GwLogger logger) {
+                             GwLogger logger,
+                             ExceptionParserUtil parser) {
         this.util = util;
         this.logger = logger;
+        this.parser = parser;
     }
 
     @Override
@@ -59,7 +63,7 @@ public class ContextInitFilter extends OncePerRequestFilter {
                     AlertSeverity.MAJOR,
                     "ContextInitFilter",
                     "Unknown exception thrown",
-                    e
+                    parser.exceptionParser(e)
             ));
         } finally {
             if (ctx.getStatus() == 0) {
@@ -70,15 +74,17 @@ public class ContextInitFilter extends OncePerRequestFilter {
             if (xLogId != null) {
                 response.setHeader("X-log-ID", xLogId.toString());
             }
-            if (!response.isCommitted()) {
+            if (response.isCommitted()) {
+                logger.logResponseOwnershipViolation(ctx.getRequestId());
+            }else {
                 response.setStatus(ctx.getStatus());
-                if (ctx.getResponseBody() != null) {
+                response.resetBuffer();
+                if (ctx.getResponseBody() != null && !ctx.getResponseBody().isEmpty()) {
                     response.getWriter().write(ctx.getResponseBody());
                 } else {
                     response.getWriter().write("{}");
                 }
             }
-
         }
     }
 }

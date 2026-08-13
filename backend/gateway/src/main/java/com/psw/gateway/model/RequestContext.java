@@ -1,4 +1,4 @@
-package com.psw.common.dto;
+package com.psw.gateway.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
